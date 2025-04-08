@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using DAL.Entities;
 using MongoDB.Driver;
+using DAL.Interfaces;
+using DAL.Repositories;
 
 namespace DAL.Extensions;
 
@@ -15,6 +17,9 @@ public static class RepositoryExtensions
 
         services.AddSingleton(database);
         services.AddScoped(provider => provider.GetRequiredService<IMongoDatabase>().GetCollection<Office>("offices"));
+
+        services.AddScoped<IOfficeRepository, OfficeRepoository>();
+        services.AddScoped<IPhotoRepository, PhotoRepository>();
 
         return services;
     }

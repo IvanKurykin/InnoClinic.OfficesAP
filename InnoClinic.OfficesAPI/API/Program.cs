@@ -1,6 +1,4 @@
 ﻿using BLL.Extensions;
-using DAL.Entities;
-using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
