@@ -15,10 +15,11 @@ public static class RepositoryExtensions
         var client = new MongoClient(connectionString);
         var database = client.GetDatabase(configuration["ConnectionStrings:DatabaseName"]);
 
-        services.AddSingleton(database);
-        services.AddScoped(provider => provider.GetRequiredService<IMongoDatabase>().GetCollection<Office>("offices"));
+        services.AddSingleton<IMongoDatabase>(database);
+        services.AddScoped<IMongoCollection<Office>>(sp =>
+            sp.GetRequiredService<IMongoDatabase>().GetCollection<Office>("offices"));
 
-        services.AddScoped<IOfficeRepository, OfficeRepoository>();
+        services.AddScoped<IOfficeRepository, OfficeRepository>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
 
         return services;
