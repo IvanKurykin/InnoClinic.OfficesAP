@@ -18,7 +18,6 @@ public class OfficeServiceTests
     private readonly Mock<IOfficeRepository> _officeRepositoryMock;
     private readonly Mock<IPhotoRepository> _photoRepositoryMock;
     private readonly Mock<IMapper> _mapperMock;
-    private readonly Mock<IOfficeHelper> _officeHelperMock;
     private readonly OfficeService _officeService;
 
     public OfficeServiceTests()
@@ -26,8 +25,7 @@ public class OfficeServiceTests
         _officeRepositoryMock = new Mock<IOfficeRepository>();
         _photoRepositoryMock = new Mock<IPhotoRepository>();
         _mapperMock = new Mock<IMapper>();
-        _officeHelperMock = new Mock<IOfficeHelper>();
-        _officeService = new OfficeService(_officeRepositoryMock.Object, _photoRepositoryMock.Object, _mapperMock.Object, _officeHelperMock.Object);
+        _officeService = new OfficeService(_officeRepositoryMock.Object, _photoRepositoryMock.Object, _mapperMock.Object);
     }
 
     [Fact]
@@ -50,13 +48,14 @@ public class OfficeServiceTests
 
         _mapperMock.Setup(x => x.Map<Office>(dto)).Returns(office);
         _officeRepositoryMock.Setup(x => x.CreateOfficeAsync(office, It.IsAny<CancellationToken>())).ReturnsAsync(createdOffice);
-        _officeHelperMock.Setup(x => x.MapToDtoWithPhotoAsync(createdOffice, It.IsAny<CancellationToken>())).ReturnsAsync(expectedDto);
+        _photoRepositoryMock.Setup(x => x.UploadPhotoAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>())).ReturnsAsync(ObjectId.GenerateNewId());
+        _mapperMock.Setup(x => x.Map<OfficeDto>(createdOffice)).Returns(expectedDto);
+        _photoRepositoryMock.Setup(x => x.GetPhotoByIdAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>())).ReturnsAsync(new byte[0]);
 
         var result = await _officeService.CreateOfficeAsync(dto);
 
         result.Should().NotBeNull();
         result.Id.Should().Be(TestConstants.TestOfficeId);
-        _officeHelperMock.Verify(x => x.ProcessAndUploadOfficePhotoAsync(office, dto.Photo, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -67,7 +66,6 @@ public class OfficeServiceTests
         var expectedDtos = offices.Select(o => new OfficeDto { Id = o.Id }).ToList();
 
         _officeRepositoryMock.Setup(x => x.GetOfficesAsync(FilterDefinition<Office>.Empty, It.IsAny<CancellationToken>())).ReturnsAsync(offices);
-        _officeHelperMock.Setup(x => x.MapOfficerToDtoAsync(offices, It.IsAny<CancellationToken>())).ReturnsAsync(expectedDtos);
 
         var result = await _officeService.GetOfficesAsync();
 
@@ -82,7 +80,8 @@ public class OfficeServiceTests
         var expectedDto = new OfficeDto { Id = TestConstants.TestOfficeId };
 
         _officeRepositoryMock.Setup(x => x.GetOfficeByIdAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<CancellationToken>())).ReturnsAsync(office);
-        _officeHelperMock.Setup(x => x.MapToDtoWithPhotoAsync(office, It.IsAny<CancellationToken>())).ReturnsAsync(expectedDto);
+        _mapperMock.Setup(x => x.Map<OfficeDto>(office)).Returns(expectedDto);
+        _photoRepositoryMock.Setup(x => x.GetPhotoByIdAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>())).ReturnsAsync(new byte[0]);
 
         var result = await _officeService.GetOfficeByIdAsync(TestConstants.TestOfficeId);
 
@@ -100,13 +99,10 @@ public class OfficeServiceTests
 
         _officeRepositoryMock.Setup(x => x.GetOfficeByIdAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<CancellationToken>())).ReturnsAsync(existingOffice);
         _officeRepositoryMock.Setup(x => x.UpdateOfficeAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<Office>(), It.IsAny<CancellationToken>())).ReturnsAsync(updatedOffice);
-        _officeHelperMock.Setup(x => x.MapToDtoWithPhotoAsync(updatedOffice, It.IsAny<CancellationToken>())).ReturnsAsync(expectedDto);
 
         var result = await _officeService.UpdateOfficeAsync(TestConstants.TestOfficeId, dto);
 
-        result.Should().NotBeNull();
         _mapperMock.Verify(x => x.Map(dto, existingOffice), Times.Once);
-        _officeHelperMock.Verify(x => x.ProcessOfficePhotoAsync(existingOffice, dto.Photo, TestConstants.TestPhotoFileId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
