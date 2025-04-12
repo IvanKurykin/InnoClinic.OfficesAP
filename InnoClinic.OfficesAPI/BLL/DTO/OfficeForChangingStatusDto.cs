@@ -1,6 +1,6 @@
 ﻿namespace BLL.DTO;
 
-public class OfficeForChangingStatusDto
+public sealed record class OfficeForChangingStatusDto
 {
     public bool IsActive { get; set; }
 }

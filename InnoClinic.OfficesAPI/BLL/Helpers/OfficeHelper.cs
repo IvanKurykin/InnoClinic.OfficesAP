@@ -9,25 +9,25 @@ using MongoDB.Driver;
 
 namespace BLL.Helpers;
 
-public class OfficeHelper(IOfficeRepository officeRepository, IPhotoRepository photoRepository, IMapper mapper)
+public static class OfficeHelper
 {  
-    public async Task<Office> GetOfficeOrThrowAsync(ObjectId id, CancellationToken cancellationToken = default)
+    public static async Task<Office> GetOfficeOrThrowAsync(IOfficeRepository officeRepository, ObjectId id, CancellationToken cancellationToken = default)
     {
         var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, id), cancellationToken);
         if (office is null) throw new OfficeNotFoundException();
         return office;
     }
 
-    public async Task ProcessOfficePhotoAsync(Office office, IFormFile? newPhoto, ObjectId? oldPhotoId, CancellationToken cancellationToken = default)
+    public static async Task ProcessOfficePhotoAsync(IPhotoRepository photoRepository, Office office, IFormFile? newPhoto, ObjectId? oldPhotoId, CancellationToken cancellationToken = default)
     {
         if (newPhoto is null) throw new OfficePhotoException();
 
         if (oldPhotoId.HasValue) await photoRepository.DeletePhotoAsync(oldPhotoId.Value, cancellationToken);
 
-        await ProcessAndUploadOfficePhotoAsync(office, newPhoto, cancellationToken);
+        await ProcessAndUploadOfficePhotoAsync(photoRepository, office, newPhoto, cancellationToken);
     }
 
-    public async Task<OfficeDto> MapToDtoWithPhotoAsync(Office office, CancellationToken cancellationToken = default)
+    public static async Task<OfficeDto> MapToDtoWithPhotoAsync(IPhotoRepository photoRepository, IMapper mapper, Office office, CancellationToken cancellationToken = default)
     {
         var dto = mapper.Map<OfficeDto>(office);
 
@@ -36,15 +36,15 @@ public class OfficeHelper(IOfficeRepository officeRepository, IPhotoRepository p
         return dto;
     }
 
-    public async Task<List<OfficeDto>> MapOfficerToDtoAsync(IEnumerable<Office> offices, CancellationToken cancellationToken = default)
+    public static async Task<List<OfficeDto>> MapOfficesToDtoAsync(IPhotoRepository photoRepository, IMapper mapper, IEnumerable<Office> offices, CancellationToken cancellationToken = default)
     {
         if (offices is null) return new List<OfficeDto>();
 
-        var dtoTasks = offices.Select(o => MapToDtoWithPhotoAsync(o, cancellationToken));
+        var dtoTasks = offices.Select(o => MapToDtoWithPhotoAsync(photoRepository, mapper, o, cancellationToken));
         return (await Task.WhenAll(dtoTasks)).ToList();
     }
 
-    public async Task ProcessAndUploadOfficePhotoAsync(Office office, IFormFile? photo, CancellationToken cancellationToken = default)
+    public static async Task ProcessAndUploadOfficePhotoAsync(IPhotoRepository photoRepository, Office office, IFormFile? photo, CancellationToken cancellationToken = default)
     {
         if (photo is null) throw new OfficePhotoException();
 
