@@ -9,7 +9,7 @@ using MongoDB.Driver;
 
 namespace BLL.Helpers;
 
-public class OfficeHelper(IOfficeRepository officeRepository, IPhotoRepository photoRepository, IMapper mapper)
+public class OfficeHelper(IOfficeRepository officeRepository, IPhotoRepository photoRepository, IMapper mapper) : IOfficeHelper
 {  
     public async Task<Office> GetOfficeOrThrowAsync(ObjectId id, CancellationToken cancellationToken = default)
     {

@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace BLL.Services;
 
-public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository photoRepository, IMapper mapper, OfficeHelper officeHelper) : IOfficeService
+public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository photoRepository, IMapper mapper, IOfficeHelper officeHelper) : IOfficeService
 {
     public async Task<OfficeDto> CreateOfficeAsync(OfficeForCreatingDto dto, CancellationToken cancellationToken = default)
     {
