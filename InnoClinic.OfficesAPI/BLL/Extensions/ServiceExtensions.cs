@@ -14,7 +14,6 @@ public static class ServiceExtensions
     {
         services.AddDataAccessLayerServices(configuration);
 
-        services.AddScoped<IOfficeHelper, OfficeHelper>();
         services.AddScoped<IOfficeService, OfficeService>();
         services.AddAutoMapper(typeof(OfficeProfile));
 
