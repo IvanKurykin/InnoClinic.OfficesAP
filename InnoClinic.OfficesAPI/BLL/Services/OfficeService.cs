@@ -30,18 +30,22 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
         return await MapOfficesToDtoAsync(offices, cancellationToken);
     }
 
-    public async Task<OfficeDto> GetOfficeByIdAsync(ObjectId id, CancellationToken cancellationToken = default)
+    public async Task<OfficeDto> GetOfficeByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, id), cancellationToken);
+        var objectId = ParseIdHelper.ParseId(id);
+
+        var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), cancellationToken);
 
         if (office is null) throw new OfficeNotFoundException();
 
         return await MapToDtoWithPhotoAsync(office, cancellationToken);
     }
 
-    public async Task<OfficeDto> UpdateOfficeAsync(ObjectId id, OfficeForUpdatingDto dto, CancellationToken cancellationToken = default)
+    public async Task<OfficeDto> UpdateOfficeAsync(string id, OfficeForUpdatingDto dto, CancellationToken cancellationToken = default)
     {
-        var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, id), cancellationToken);
+        var objectId = ParseIdHelper.ParseId(id);
+
+        var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), cancellationToken);
 
         if (office is null) throw new OfficeNotFoundException();
 
@@ -51,33 +55,37 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
 
         await ProcessOfficePhotoAsync(office, dto.Photo, oldPhotoFileId, cancellationToken);
 
-        var updatedOffice = await officeRepository.UpdateOfficeAsync(Builders<Office>.Filter.Eq(o => o.Id, id), office, cancellationToken);
+        var updatedOffice = await officeRepository.UpdateOfficeAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), office, cancellationToken);
 
         return await MapToDtoWithPhotoAsync(updatedOffice, cancellationToken);
     }
 
-    public async Task<OfficeDto> UpdateOfficeStatusAsync(ObjectId id, OfficeForChangingStatusDto dto, CancellationToken cancellationToken = default)
+    public async Task<OfficeDto> UpdateOfficeStatusAsync(string id, OfficeForChangingStatusDto dto, CancellationToken cancellationToken = default)
     {
-        var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, id), cancellationToken);
+        var objectId = ParseIdHelper.ParseId(id);
+
+        var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), cancellationToken);
 
         if (office is null) throw new OfficeNotFoundException();
 
         office.IsActive = dto.IsActive;
 
-        var updatedOffice = await officeRepository.UpdateOfficeAsync(Builders<Office>.Filter.Eq(o => o.Id, id), office, cancellationToken);
+        var updatedOffice = await officeRepository.UpdateOfficeAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), office, cancellationToken);
 
         return mapper.Map<OfficeDto>(updatedOffice);
     }
 
-    public async Task DeleteOfficeAsync(ObjectId id, CancellationToken cancellationToken = default)
+    public async Task DeleteOfficeAsync(string id, CancellationToken cancellationToken = default)
     {
-        var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, id),cancellationToken);
+        var objectId = ParseIdHelper.ParseId(id);
+
+        var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId),cancellationToken);
 
         if (office is null) throw new OfficeNotFoundException();
 
         if (office.PhotoFileId.HasValue) await photoRepository.DeletePhotoAsync(office.PhotoFileId.Value, cancellationToken);
         
-        await officeRepository.DeleteOfficeAsync(Builders<Office>.Filter.Eq(o => o.Id, id), cancellationToken);
+        await officeRepository.DeleteOfficeAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), cancellationToken);
     }
 
     private async Task ProcessOfficePhotoAsync(Office office, IFormFile? newPhoto, ObjectId? oldPhotoId, CancellationToken cancellationToken = default)

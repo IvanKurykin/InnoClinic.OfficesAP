@@ -43,6 +43,7 @@ public class ExceptionHandlingMiddleware(ILogger<OfficeController> logger) : IMi
         {
             OfficeNotFoundException => StatusCodes.Status404NotFound,
             OfficePhotoException => StatusCodes.Status400BadRequest,
+            InvalidIdException => StatusCodes.Status400BadRequest,
             _ => StatusCodes.Status500InternalServerError
         };
 

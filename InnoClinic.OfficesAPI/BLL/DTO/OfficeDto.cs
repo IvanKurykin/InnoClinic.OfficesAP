@@ -4,7 +4,7 @@ namespace BLL.DTO;
 
 public sealed record class OfficeDto
 {
-    public ObjectId Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     public byte[]? Photo { get; set; }
     public string City { get; set; } = string.Empty;
     public string Street { get; set; } = string.Empty;

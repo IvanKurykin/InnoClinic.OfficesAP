@@ -2,7 +2,6 @@
 using BLL.Helpers;
 using BLL.Services;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 
 namespace API.Controllers;
 
@@ -13,7 +12,7 @@ public class OfficeController(OfficeService officeService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost]
-    public async Task<ActionResult<OfficeDto>> CreateOfficeAsync([FromBody] OfficeForCreatingDto officeDto, CancellationToken cancellationToken) =>
+    public async Task<ActionResult<OfficeDto>> CreateOfficeAsync([FromForm] OfficeForCreatingDto officeDto, CancellationToken cancellationToken) =>
         Ok(await officeService.CreateOfficeAsync(officeDto, cancellationToken));
 
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -24,29 +23,29 @@ public class OfficeController(OfficeService officeService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpGet("{id:objectId}")]
-    public async Task<ActionResult<OfficeDto>> GetOfficeByIdAsync([FromRoute] ObjectId id, CancellationToken cancellationToken) =>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<OfficeDto>> GetOfficeByIdAsync([FromRoute] string id, CancellationToken cancellationToken) =>
         Ok(await officeService.GetOfficeByIdAsync(id, cancellationToken));
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpPost]
-    public async Task<ActionResult<OfficeDto>> UpdateOfficeAsync([FromRoute] ObjectId id, [FromBody] OfficeForUpdatingDto dto, CancellationToken cancellationToken) =>
+    [HttpPut("{id}")]
+    public async Task<ActionResult<OfficeDto>> UpdateOfficeAsync([FromRoute] string id, [FromForm] OfficeForUpdatingDto dto, CancellationToken cancellationToken) =>
         Ok(await officeService.UpdateOfficeAsync(id, dto, cancellationToken));
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpPost]
-    public async Task<ActionResult<OfficeDto>> UpdateOfficeStatusAsync([FromRoute] ObjectId id, [FromBody] OfficeForChangingStatusDto dto, CancellationToken cancellationToken) =>
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<OfficeDto>> UpdateOfficeStatusAsync([FromRoute] string id, [FromForm] OfficeForChangingStatusDto dto, CancellationToken cancellationToken) =>
         Ok(await officeService.UpdateOfficeStatusAsync(id, dto, cancellationToken));
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [HttpDelete("{id:objectId}")]
-    public async Task<ActionResult> DeleteOfficeAsync([FromRoute] ObjectId id, CancellationToken cancellationToken)
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteOfficeAsync([FromRoute] string id, CancellationToken cancellationToken)
     {
         await officeService.DeleteOfficeAsync(id, cancellationToken);
         return Ok(Messages.OfficeDeletedSuccessfully);
