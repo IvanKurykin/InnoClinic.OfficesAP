@@ -1,4 +1,8 @@
-﻿using DAL.Extensions;
+﻿using BLL.Helpers;
+using BLL.Interfaces;
+using BLL.Mapper;
+using BLL.Services;
+using DAL.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +13,9 @@ public static class ServiceExtensions
     public static IServiceCollection AddBusinessLoginLayerServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDataAccessLayerServices(configuration);
+
+        services.AddScoped<IOfficeService, OfficeService>();
+        services.AddAutoMapper(typeof(OfficeProfile));
 
         return services;
     }
