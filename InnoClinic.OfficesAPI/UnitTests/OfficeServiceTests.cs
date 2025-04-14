@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BLL.DTO;
-using BLL.Helpers;
 using BLL.Services;
 using DAL.Entities;
 using DAL.Interfaces;
@@ -66,6 +65,8 @@ public class OfficeServiceTests
         var expectedDtos = offices.Select(o => new OfficeDto { Id = o.Id }).ToList();
 
         _officeRepositoryMock.Setup(x => x.GetOfficesAsync(FilterDefinition<Office>.Empty, It.IsAny<CancellationToken>())).ReturnsAsync(offices);
+        _mapperMock.Setup(x => x.Map<OfficeDto>(It.IsAny<Office>())).Returns<Office>(o => new OfficeDto { Id = o.Id });
+        _photoRepositoryMock.Setup(x => x.GetPhotoByIdAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>())).ReturnsAsync(new byte[0]);
 
         var result = await _officeService.GetOfficesAsync();
 
@@ -99,6 +100,8 @@ public class OfficeServiceTests
 
         _officeRepositoryMock.Setup(x => x.GetOfficeByIdAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<CancellationToken>())).ReturnsAsync(existingOffice);
         _officeRepositoryMock.Setup(x => x.UpdateOfficeAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<Office>(), It.IsAny<CancellationToken>())).ReturnsAsync(updatedOffice);
+        _mapperMock.Setup(x => x.Map<OfficeDto>(updatedOffice)).Returns(expectedDto);
+        _photoRepositoryMock.Setup(x => x.GetPhotoByIdAsync(It.IsAny<ObjectId>(), It.IsAny<CancellationToken>())).ReturnsAsync(new byte[0]);
 
         var result = await _officeService.UpdateOfficeAsync(TestConstants.TestOfficeId, dto);
 
