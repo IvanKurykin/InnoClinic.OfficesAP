@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Http;
 
 namespace BLL.Helpers;
 
+[ExcludeFromCodeCoverage]
 public static class ValidationHelper
 {
     public static bool BeAValidImage(IFormFile? file)

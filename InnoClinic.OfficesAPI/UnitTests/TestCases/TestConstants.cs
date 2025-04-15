@@ -9,6 +9,7 @@ public static class TestConstants
     public static readonly byte[] TestPhotoData = new byte[] { 0x01, 0x02, 0x03 };
     public static readonly string TestPhotoFileName = "office.jpg";
 
+    public const string TestRequestId = "507f1f77bcf86cd799439011";
     public const string TestCity = "Test City";
     public const string TestStreet = "Test Street";
     public const string TestHouseNumber = "123";

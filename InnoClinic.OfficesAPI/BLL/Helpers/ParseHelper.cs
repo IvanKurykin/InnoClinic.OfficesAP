@@ -1,8 +1,10 @@
-﻿using BLL.Exceptions;
+﻿using System.Diagnostics.CodeAnalysis;
+using BLL.Exceptions;
 using MongoDB.Bson;
 
 namespace BLL.Helpers;
 
+[ExcludeFromCodeCoverage]
 public static class ParseHelper
 {
     public static ObjectId ParseId(string id)
