@@ -32,7 +32,7 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
 
     public async Task<OfficeResultDto> GetOfficeByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        var objectId = ParseIdHelper.ParseId(id);
+        var objectId = ParseHelper.ParseId(id);
 
         var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), cancellationToken);
 
@@ -43,7 +43,7 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
 
     public async Task<OfficeResultDto> UpdateOfficeAsync(string id, OfficeRequestDto dto, CancellationToken cancellationToken = default)
     {
-        var objectId = ParseIdHelper.ParseId(id);
+        var objectId = ParseHelper.ParseId(id);
 
         var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), cancellationToken);
 
@@ -62,7 +62,7 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
 
     public async Task<OfficeResultDto> UpdateOfficeStatusAsync(string id, bool isActive, CancellationToken cancellationToken = default)
     {
-        var objectId = ParseIdHelper.ParseId(id);
+        var objectId = ParseHelper.ParseId(id);
 
         var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), cancellationToken);
 
@@ -77,7 +77,7 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
 
     public async Task DeleteOfficeAsync(string id, CancellationToken cancellationToken = default)
     {
-        var objectId = ParseIdHelper.ParseId(id);
+        var objectId = ParseHelper.ParseId(id);
 
         var office = await officeRepository.GetOfficeByIdAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId),cancellationToken);
 

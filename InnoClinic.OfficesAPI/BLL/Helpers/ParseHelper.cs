@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace BLL.Helpers;
 
-public static class ParseIdHelper
+public static class ParseHelper
 {
     public static ObjectId ParseId(string id)
     {

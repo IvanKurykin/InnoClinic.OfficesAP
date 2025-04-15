@@ -1,5 +1,4 @@
 ﻿using BLL.DTO;
-using BLL.Helpers;
 using BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +8,8 @@ namespace API.Controllers;
 [Route("api/[controller]")]
 public class OfficeController(IOfficeService officeService) : ControllerBase
 {
+    private const string _officeDeletedSuccessfullyMessage = "The office was successfully deleted.";
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost]
@@ -48,6 +49,6 @@ public class OfficeController(IOfficeService officeService) : ControllerBase
     public async Task<ActionResult> DeleteOfficeAsync([FromRoute] string id, CancellationToken cancellationToken)
     {
         await officeService.DeleteOfficeAsync(id, cancellationToken);
-        return Ok(Messages.OfficeDeletedSuccessfully);
+        return Ok(_officeDeletedSuccessfullyMessage);
     }
  }
