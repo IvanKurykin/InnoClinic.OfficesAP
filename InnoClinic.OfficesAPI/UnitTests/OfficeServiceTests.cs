@@ -153,7 +153,7 @@ namespace UnitTests
             _officeRepositoryMock.Verify(r => r.DeleteOfficeAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        private IFormFile CreateTestFormFile()
+        private static FormFile CreateTestFormFile()
         {
             var content = "Test file content";
             var fileName = TestConstants.TestPhotoFileName;
