@@ -2,7 +2,7 @@
 
 namespace BLL.DTO;
 
-public abstract class OfficeBaseDto
+public sealed class OfficeRequestDto
 {
     public IFormFile? Photo { get; set; }
     public string City { get; set; } = string.Empty;
