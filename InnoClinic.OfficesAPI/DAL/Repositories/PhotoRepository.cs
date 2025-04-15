@@ -7,7 +7,7 @@ namespace DAL.Repositories;
 
 public class PhotoRepository(IMongoDatabase database) : IPhotoRepository
 {
-    private readonly IGridFSBucket bucket = new GridFSBucket(database);
+    private readonly GridFSBucket bucket = new GridFSBucket(database);
 
     public async Task DeletePhotoAsync(ObjectId id, CancellationToken cancellationToken = default) =>
         await bucket.DeleteAsync(id, cancellationToken);
