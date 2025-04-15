@@ -1,9 +1,12 @@
-﻿namespace BLL.Exceptions;
+﻿using Microsoft.AspNetCore.Http;
 
-public class OfficeNotFoundException : Exception
+namespace BLL.Exceptions;
+
+public class OfficeNotFoundException : OfficeException
 {
     private const string DefaultMessage = "The office was not found.";
-    public OfficeNotFoundException() : base(DefaultMessage) { }
-    public OfficeNotFoundException(string message) : base(message) { }
-    public OfficeNotFoundException(string message, Exception innerException) : base(message, innerException) { }
+    private const int OfficeNotFoundExceptionStatusCode = StatusCodes.Status404NotFound;
+
+    public OfficeNotFoundException() : base(DefaultMessage, OfficeNotFoundExceptionStatusCode) { }
+    public OfficeNotFoundException(string message) : base(message, OfficeNotFoundExceptionStatusCode) { }
 }

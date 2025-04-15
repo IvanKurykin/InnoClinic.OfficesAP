@@ -1,14 +1,13 @@
 ﻿using BLL.DTO;
-using MongoDB.Bson;
 
 namespace BLL.Interfaces;
 
 public interface IOfficeService
 {
-    Task<OfficeDto> CreateOfficeAsync(OfficeForCreatingDto dto, CancellationToken cancellationToken = default);
-    Task<List<OfficeDto>> GetOfficesAsync(CancellationToken cancellationToken = default);
-    Task<OfficeDto> GetOfficeByIdAsync(ObjectId id, CancellationToken cancellationToken = default);
-    Task<OfficeDto> UpdateOfficeAsync(ObjectId id, OfficeForUpdatingDto dto, CancellationToken cancellationToken = default);
-    Task<OfficeDto> UpdateOfficeStatusAsync(ObjectId id, OfficeForChangingStatusDto dto, CancellationToken cancellationToken = default);
-    Task DeleteOfficeAsync(ObjectId id, CancellationToken cancellationToken = default);
+    Task<OfficeResultDto> CreateOfficeAsync(OfficeRequestDto dto, CancellationToken cancellationToken = default);
+    Task<List<OfficeResultDto>> GetOfficesAsync(CancellationToken cancellationToken = default);
+    Task<OfficeResultDto> GetOfficeByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<OfficeResultDto> UpdateOfficeAsync(string id, OfficeRequestDto dto, CancellationToken cancellationToken = default);
+    Task<OfficeResultDto> UpdateOfficeStatusAsync(string id, bool isActive, CancellationToken cancellationToken = default);
+    Task DeleteOfficeAsync(string id, CancellationToken cancellationToken = default);
 }

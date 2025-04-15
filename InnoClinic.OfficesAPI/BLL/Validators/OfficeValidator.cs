@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace BLL.Validators;
 
-public abstract class OfficeBaseValidator<T> : AbstractValidator<T> where T : OfficeBaseDto
+public class OfficeValidator : AbstractValidator<OfficeRequestDto>
 {
-    protected void ApplyCommonRules()
+    public OfficeValidator()
     {
         RuleFor(o => o.Photo)
             .Must(ValidationHelper.BeAValidImage).WithMessage("Invalid image format")
@@ -25,11 +25,11 @@ public abstract class OfficeBaseValidator<T> : AbstractValidator<T> where T : Of
         RuleFor(o => o.HouseNumber)
             .NotEmpty().WithMessage("Please, enter the office's house number")
             .MaximumLength(20).WithMessage("House number cannot exceed 20 characters")
-            .Must(ValidationHelper.BeAValidNumber).WithMessage("House number must contain only digits and optional letters");
+            .Must(num => ValidationHelper.BeAValidNumber(num)).WithMessage("House number must contain only digits and optional letters");
 
         RuleFor(o => o.OfficeNumber)
             .MaximumLength(20).WithMessage("Office number cannot exceed 20 characters")
-            .Must(ValidationHelper.BeAValidNumberOrEmpty).WithMessage("Office number must contain only digits and optional letters")
+            .Must((o, num) => ValidationHelper.BeAValidNumber(num, orEmpty: true)).WithMessage("Office number must contain only digits and optional letters")
             .When(o => !string.IsNullOrEmpty(o.OfficeNumber));
 
         RuleFor(o => o.IsActive)
