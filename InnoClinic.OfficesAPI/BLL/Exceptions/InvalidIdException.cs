@@ -1,9 +1,12 @@
-﻿namespace BLL.Exceptions;
+﻿using Microsoft.AspNetCore.Http;
 
-public class InvalidIdException : Exception
+namespace BLL.Exceptions;
+
+public class InvalidIdException : OfficeException
 {
     private const string DefaultMessage = "Invalid id.";
-    public InvalidIdException() : base(DefaultMessage) { }
-    public InvalidIdException(string message) : base(message) { }
-    public InvalidIdException(string message, Exception innerException) : base(message, innerException) { }
+    private const int InvalidIdExceptionStatusCode = StatusCodes.Status400BadRequest;
+
+    public InvalidIdException() : base(DefaultMessage, InvalidIdExceptionStatusCode) { }
+    public InvalidIdException(string message) : base(message, InvalidIdExceptionStatusCode) { }
 }

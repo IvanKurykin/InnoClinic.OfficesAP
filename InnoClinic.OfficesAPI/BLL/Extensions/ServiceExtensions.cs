@@ -1,5 +1,4 @@
-﻿using BLL.Helpers;
-using BLL.Interfaces;
+﻿using BLL.Interfaces;
 using BLL.Mapper;
 using BLL.Services;
 using DAL.Extensions;
@@ -10,11 +9,10 @@ namespace BLL.Extensions;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddBusinessLoginLayerServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddBusinessLogiсLayerServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDataAccessLayerServices(configuration);
 
-        services.AddScoped<OfficeService>();
         services.AddScoped<IOfficeService, OfficeService>();
 
         services.AddAutoMapper(typeof(OfficeProfile));

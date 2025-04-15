@@ -1,23 +1,19 @@
-﻿using API.Middleware;
+﻿using API.Extensions;
+using API.Middleware;
 using BLL.Extensions;
-using BLL.Validators;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Http.Features;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddFluentValidationAutoValidation()
-    .AddFluentValidationClientsideAdapters()
-    .AddValidatorsFromAssemblyContaining<OfficeForCreationDtoValidator>();
-
-builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+builder.Host.UseSerilog((context, config) => config.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddBusinessLoginLayerServices(builder.Configuration);
+builder.Services.AddCustomValidation();
+
+builder.Services.AddBusinessLogiсLayerServices(builder.Configuration);
 
 var app = builder.Build();
 

@@ -1,21 +1,28 @@
 ﻿using System.Text.Json;
-using API.Controllers;
 using BLL.Exceptions;
 using FluentValidation;
+using Serilog;
 
 namespace API.Middleware;
 
-public class ExceptionHandlingMiddleware(ILogger<OfficeController> logger) : IMiddleware
+public class ExceptionHandlingMiddleware
 {
-    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    private readonly RequestDelegate _next;
+
+    public ExceptionHandlingMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await next(context);
+            await _next(context);
         }
         catch (Exception e)
         {
-            logger.LogError(e, "An unhandled exception occurred: {ExceptionMessage}", e.Message);
+            Log.Error(e, "An unhandled exception occurred: {ExceptionMessage}", e.Message);
             await HandleExceptionAsync(context, e);
         }
     }
@@ -39,13 +46,9 @@ public class ExceptionHandlingMiddleware(ILogger<OfficeController> logger) : IMi
             return;
         }
 
-        context.Response.StatusCode = exception switch
-        {
-            OfficeNotFoundException => StatusCodes.Status404NotFound,
-            OfficePhotoException => StatusCodes.Status400BadRequest,
-            InvalidIdException => StatusCodes.Status400BadRequest,
-            _ => StatusCodes.Status500InternalServerError
-        };
+        context.Response.StatusCode = exception is OfficeException customException
+            ? customException.HttpStatusCode
+            : StatusCodes.Status500InternalServerError;
 
         await context.Response.WriteAsync(JsonSerializer.Serialize(new
         {

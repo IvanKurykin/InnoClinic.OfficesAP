@@ -1,8 +1,6 @@
-﻿using MongoDB.Bson;
+﻿namespace BLL.DTO;
 
-namespace BLL.DTO;
-
-public sealed record class OfficeDto
+public sealed record class OfficeResultDto
 {
     public string Id { get; set; } = string.Empty;
     public byte[]? Photo { get; set; }

@@ -13,7 +13,7 @@ namespace BLL.Services;
 
 public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository photoRepository, IMapper mapper) : IOfficeService
 {
-    public async Task<OfficeDto> CreateOfficeAsync(OfficeForCreatingDto dto, CancellationToken cancellationToken = default)
+    public async Task<OfficeResultDto> CreateOfficeAsync(OfficeRequestDto dto, CancellationToken cancellationToken = default)
     {
         var office = mapper.Map<Office>(dto);
 
@@ -24,13 +24,13 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
         return await MapToDtoWithPhotoAsync(createdOffice, cancellationToken);
     }
 
-    public async Task<List<OfficeDto>> GetOfficesAsync(CancellationToken cancellationToken = default)
+    public async Task<List<OfficeResultDto>> GetOfficesAsync(CancellationToken cancellationToken = default)
     {
         var offices = await officeRepository.GetOfficesAsync(FilterDefinition<Office>.Empty, cancellationToken);
         return await MapOfficesToDtoAsync(offices, cancellationToken);
     }
 
-    public async Task<OfficeDto> GetOfficeByIdAsync(string id, CancellationToken cancellationToken = default)
+    public async Task<OfficeResultDto> GetOfficeByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         var objectId = ParseIdHelper.ParseId(id);
 
@@ -41,7 +41,7 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
         return await MapToDtoWithPhotoAsync(office, cancellationToken);
     }
 
-    public async Task<OfficeDto> UpdateOfficeAsync(string id, OfficeForUpdatingDto dto, CancellationToken cancellationToken = default)
+    public async Task<OfficeResultDto> UpdateOfficeAsync(string id, OfficeRequestDto dto, CancellationToken cancellationToken = default)
     {
         var objectId = ParseIdHelper.ParseId(id);
 
@@ -60,7 +60,7 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
         return await MapToDtoWithPhotoAsync(updatedOffice, cancellationToken);
     }
 
-    public async Task<OfficeDto> UpdateOfficeStatusAsync(string id, OfficeForChangingStatusDto dto, CancellationToken cancellationToken = default)
+    public async Task<OfficeResultDto> UpdateOfficeStatusAsync(string id, bool isActive, CancellationToken cancellationToken = default)
     {
         var objectId = ParseIdHelper.ParseId(id);
 
@@ -68,11 +68,11 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
 
         if (office is null) throw new OfficeNotFoundException();
 
-        office.IsActive = dto.IsActive;
+        office.IsActive = isActive;
 
         var updatedOffice = await officeRepository.UpdateOfficeAsync(Builders<Office>.Filter.Eq(o => o.Id, objectId), office, cancellationToken);
 
-        return mapper.Map<OfficeDto>(updatedOffice);
+        return mapper.Map<OfficeResultDto>(updatedOffice);
     }
 
     public async Task DeleteOfficeAsync(string id, CancellationToken cancellationToken = default)
@@ -97,18 +97,18 @@ public class OfficeService(IOfficeRepository officeRepository, IPhotoRepository 
         await ProcessAndUploadOfficePhotoAsync(office, newPhoto, cancellationToken);
     }
 
-    private async Task<OfficeDto> MapToDtoWithPhotoAsync(Office office, CancellationToken cancellationToken = default)
+    private async Task<OfficeResultDto> MapToDtoWithPhotoAsync(Office office, CancellationToken cancellationToken = default)
     {
-        var dto = mapper.Map<OfficeDto>(office);
+        var dto = mapper.Map<OfficeResultDto>(office);
 
         if (office.PhotoFileId.HasValue) dto.Photo = await photoRepository.GetPhotoByIdAsync(office.PhotoFileId.Value, cancellationToken);
 
         return dto;
     }
 
-    private async Task<List<OfficeDto>> MapOfficesToDtoAsync(IEnumerable<Office> offices, CancellationToken cancellationToken = default)
+    private async Task<List<OfficeResultDto>> MapOfficesToDtoAsync(IEnumerable<Office> offices, CancellationToken cancellationToken = default)
     {
-        if (offices is null) return new List<OfficeDto>();
+        if (offices is null) return new List<OfficeResultDto>();
 
         var dtoTasks = offices.Select(o => MapToDtoWithPhotoAsync(o, cancellationToken));
 
