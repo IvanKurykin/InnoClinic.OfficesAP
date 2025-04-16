@@ -1,5 +1,8 @@
-﻿namespace BLL.Exceptions;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace BLL.Exceptions;
+
+[ExcludeFromCodeCoverage]
 public abstract class OfficeException : Exception
 {
     public int HttpStatusCode { get; }

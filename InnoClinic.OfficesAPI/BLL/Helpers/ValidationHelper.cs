@@ -13,9 +13,11 @@ public static class ValidationHelper
         return allowedExtensions.Contains(extension);
     }
 
-    public static bool BeAValidNumber(string? number, bool orEmpty = false)
+    public static bool IsNumberValid(string? input, bool allowEmpty = false)
     {
-        return (orEmpty && string.IsNullOrEmpty(number))|| (!string.IsNullOrEmpty(number) && number.All(c => char.IsDigit(c) || char.IsLetter(c)));
+        if (string.IsNullOrEmpty(input)) return allowEmpty;
+
+        return input.All(char.IsLetterOrDigit);
     }
 
     public static bool BeAValidName(string name)

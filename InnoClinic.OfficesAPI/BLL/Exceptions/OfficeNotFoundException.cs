@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Http;
 
 namespace BLL.Exceptions;
 
+[ExcludeFromCodeCoverage]
 public class OfficeNotFoundException : OfficeException
 {
     private const string DefaultMessage = "The office was not found.";

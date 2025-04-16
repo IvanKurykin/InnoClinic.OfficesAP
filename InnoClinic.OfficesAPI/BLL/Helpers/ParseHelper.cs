@@ -1,4 +1,5 @@
-﻿using BLL.Exceptions;
+﻿using System.Diagnostics.CodeAnalysis;
+using BLL.Exceptions;
 using MongoDB.Bson;
 
 namespace BLL.Helpers;
