@@ -25,11 +25,11 @@ public class OfficeValidator : AbstractValidator<OfficeRequestDto>
         RuleFor(o => o.HouseNumber)
             .NotEmpty().WithMessage("Please, enter the office's house number")
             .MaximumLength(20).WithMessage("House number cannot exceed 20 characters")
-            .Must(num => ValidationHelper.IsAValidNumber(num)).WithMessage("House number must contain only digits and optional letters");
+            .Must(num => ValidationHelper.IsNumberValid(num)).WithMessage("House number must contain only digits and optional letters");
 
         RuleFor(o => o.OfficeNumber)
             .MaximumLength(20).WithMessage("Office number cannot exceed 20 characters")
-            .Must((o, num) => ValidationHelper.IsAValidNumber(num, allowEmpty: true)).WithMessage("Office number must contain only digits and optional letters")
+            .Must((o, num) => ValidationHelper.IsNumberValid(num, allowEmpty: true)).WithMessage("Office number must contain only digits and optional letters")
             .When(o => !string.IsNullOrEmpty(o.OfficeNumber));
 
         RuleFor(o => o.IsActive)

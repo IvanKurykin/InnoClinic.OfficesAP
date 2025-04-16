@@ -13,7 +13,7 @@ public static class ValidationHelper
         return allowedExtensions.Contains(extension);
     }
 
-    public static bool IsAValidNumber(string? input, bool allowEmpty = false)
+    public static bool IsNumberValid(string? input, bool allowEmpty = false)
     {
         if (string.IsNullOrEmpty(input)) return allowEmpty;
 

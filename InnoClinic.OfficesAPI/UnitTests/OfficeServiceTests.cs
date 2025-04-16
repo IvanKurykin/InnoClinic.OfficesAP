@@ -52,6 +52,10 @@ namespace UnitTests
             var result = await _officeService.CreateOfficeAsync(dto);
 
             result.Should().Be(expectedResult);
+            _mapperMock.Verify(m => m.Map<Office>(dto), Times.Once);
+            _officeRepositoryMock.Verify(r => r.CreateOfficeAsync(office, It.IsAny<CancellationToken>()), Times.Once);
+            _photoRepositoryMock.Verify(r => r.UploadPhotoAsync(dto.Photo.FileName, It.IsAny<byte[]>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mapperMock.Verify(m => m.Map<OfficeResultDto>(createdOffice), Times.Once);
         }
 
         [Fact]
@@ -75,6 +79,11 @@ namespace UnitTests
             var result = await _officeService.GetOfficesAsync();
 
             result.Should().Equal(expectedResults);
+            _officeRepositoryMock.Verify(r => r.GetOfficesAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<CancellationToken>()), Times.Once);
+            foreach (var office in offices)
+            {
+                _mapperMock.Verify(m => m.Map<OfficeResultDto>(office), Times.Once);
+            }
         }
 
         [Fact]
@@ -83,6 +92,7 @@ namespace UnitTests
             var id = TestConstants.TestOfficeId.ToString();
             var office = new Office { Id = TestConstants.TestOfficeId };
             var expectedResult = new OfficeResultDto();
+            var expectedFilter = Builders<Office>.Filter.Eq(x => x.Id, ObjectId.Parse(id));
 
             _officeRepositoryMock.Setup(r => r.GetOfficeByIdAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<CancellationToken>())).ReturnsAsync(office);
             _mapperMock.Setup(m => m.Map<OfficeResultDto>(office)).Returns(expectedResult);
@@ -90,6 +100,9 @@ namespace UnitTests
             var result = await _officeService.GetOfficeByIdAsync(id);
 
             result.Should().Be(expectedResult);
+
+            _officeRepositoryMock.Verify(r => r.GetOfficeByIdAsync(It.Is<FilterDefinition<Office>>(f => f.ToString() == expectedFilter.ToString()), It.IsAny<CancellationToken>()), Times.Once);
+            _mapperMock.Verify(m => m.Map<OfficeResultDto>(office), Times.Once);
         }
 
         [Fact]
@@ -105,6 +118,7 @@ namespace UnitTests
             var existingOffice = new Office { Id = TestConstants.TestOfficeId, PhotoFileId = TestConstants.TestPhotoFileId };
             var updatedOffice = new Office { Id = TestConstants.TestOfficeId };
             var expectedResult = new OfficeResultDto();
+            var expectedFilter = Builders<Office>.Filter.Eq(x => x.Id, ObjectId.Parse(id));
 
             _officeRepositoryMock.Setup(r => r.GetOfficeByIdAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<CancellationToken>())).ReturnsAsync(existingOffice);
             _officeRepositoryMock.Setup(r => r.UpdateOfficeAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<Office>(), It.IsAny<CancellationToken>())).ReturnsAsync(updatedOffice);
@@ -115,7 +129,12 @@ namespace UnitTests
             var result = await _officeService.UpdateOfficeAsync(id, dto);
 
             result.Should().Be(expectedResult);
+
+            _officeRepositoryMock.Verify(r => r.GetOfficeByIdAsync(It.Is<FilterDefinition<Office>>(f => f.ToString() == expectedFilter.ToString()), It.IsAny<CancellationToken>()), Times.Once);
+            _officeRepositoryMock.Verify(r => r.UpdateOfficeAsync(It.Is<FilterDefinition<Office>>(f => f.ToString() == expectedFilter.ToString()), It.IsAny<Office>(), It.IsAny<CancellationToken>()), Times.Once);
             _photoRepositoryMock.Verify(r => r.DeletePhotoAsync(TestConstants.TestPhotoFileId, It.IsAny<CancellationToken>()), Times.Once);
+            _photoRepositoryMock.Verify(r => r.UploadPhotoAsync(dto.Photo.FileName, It.IsAny<byte[]>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mapperMock.Verify(m => m.Map<OfficeResultDto>(updatedOffice), Times.Once);
         }
 
         [Fact]
@@ -126,6 +145,7 @@ namespace UnitTests
             var office = new Office { Id = TestConstants.TestOfficeId, IsActive = true };
             var updatedOffice = new Office { Id = TestConstants.TestOfficeId, IsActive = isActive };
             var expectedResult = new OfficeResultDto { IsActive = isActive };
+            var expectedFilter = Builders<Office>.Filter.Eq(x => x.Id, ObjectId.Parse(id));
 
             _officeRepositoryMock.Setup(r => r.GetOfficeByIdAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<CancellationToken>())).ReturnsAsync(office);
             _officeRepositoryMock.Setup(r => r.UpdateOfficeAsync(It.IsAny<FilterDefinition<Office>>(), It.IsAny<Office>(), It.IsAny<CancellationToken>())).ReturnsAsync(updatedOffice);
@@ -135,6 +155,10 @@ namespace UnitTests
 
             result.Should().Be(expectedResult);
             result.IsActive.Should().Be(isActive);
+
+            _officeRepositoryMock.Verify(r => r.GetOfficeByIdAsync(It.Is<FilterDefinition<Office>>(f => f.ToString() == expectedFilter.ToString()), It.IsAny<CancellationToken>()), Times.Once);
+            _officeRepositoryMock.Verify(r => r.UpdateOfficeAsync(It.Is<FilterDefinition<Office>>(f => f.ToString() == expectedFilter.ToString()), It.Is<Office>(o => o.IsActive == isActive), It.IsAny<CancellationToken>()), Times.Once);
+            _mapperMock.Verify(m => m.Map<OfficeResultDto>(updatedOffice), Times.Once);
         }
 
         [Fact]

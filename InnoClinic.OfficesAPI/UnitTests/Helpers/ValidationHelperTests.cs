@@ -39,7 +39,7 @@ public class ValidationHelperTests
     [InlineData("ABC!123", false)]
     public void BeAValidNumberValidatesNumberFormat(string? number, bool expected)
     {
-        var result = ValidationHelper.IsAValidNumber(number);
+        var result = ValidationHelper.IsNumberValid(number);
 
         result.Should().Be(expected);
     }
@@ -53,7 +53,7 @@ public class ValidationHelperTests
     [InlineData(null, false, false)]
     public void BeAValidNumberWithOrEmptyOptionValidatesCorrectly(string? number, bool orEmpty, bool expected)
     {
-        var result = ValidationHelper.IsAValidNumber(number, orEmpty);
+        var result = ValidationHelper.IsNumberValid(number, orEmpty);
 
         result.Should().Be(expected);
     }

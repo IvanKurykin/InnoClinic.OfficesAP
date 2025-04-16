@@ -32,6 +32,7 @@ public class OfficeRepositoryTests
         var result = await _officeRepository.CreateOfficeAsync(office);
 
         result.Should().BeEquivalentTo(office);
+
         _collectionMock.Verify(x => x.InsertOneAsync(office, null, It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -52,6 +53,9 @@ public class OfficeRepositoryTests
         var result = await _officeRepository.GetOfficesAsync(filter);
 
         result.Should().BeEquivalentTo(expectedOffices);
+
+        _collectionMock.Verify(x => x.FindAsync(filter, It.IsAny<FindOptions<Office, Office>>(), It.IsAny<CancellationToken>()), Times.Once);
+        _cursorMock.Verify(x => x.MoveNextAsync(It.IsAny<CancellationToken>()), Times.Exactly(2));
     }
 
     [Fact]
@@ -68,6 +72,9 @@ public class OfficeRepositoryTests
         var result = await _officeRepository.GetOfficeByIdAsync(filter);
 
         result.Should().BeEquivalentTo(expectedOffice);
+
+        _collectionMock.Verify(x => x.FindAsync(filter, It.IsAny<FindOptions<Office, Office>>(), It.IsAny<CancellationToken>()), Times.Once);
+        _cursorMock.Verify(x => x.MoveNextAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

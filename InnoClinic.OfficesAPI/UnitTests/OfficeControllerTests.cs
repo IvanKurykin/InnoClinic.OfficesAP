@@ -32,6 +32,8 @@ namespace UnitTests
             var actionResult = Assert.IsType<ActionResult<OfficeResultDto>>(result);
             var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
             okResult.Value.Should().Be(expectedResult);
+
+            _officeServiceMock.Verify(s => s.CreateOfficeAsync(dto, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -46,6 +48,8 @@ namespace UnitTests
             var actionResult = Assert.IsType<ActionResult<List<OfficeResultDto>>>(result);
             var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
             okResult.Value.Should().BeEquivalentTo(expectedResult);
+
+            _officeServiceMock.Verify(s => s.GetOfficesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -61,6 +65,8 @@ namespace UnitTests
             var actionResult = Assert.IsType<ActionResult<OfficeResultDto>>(result);
             var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
             okResult.Value.Should().Be(expectedResult);
+
+            _officeServiceMock.Verify(s => s.GetOfficeByIdAsync(id, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -77,6 +83,8 @@ namespace UnitTests
             var actionResult = Assert.IsType<ActionResult<OfficeResultDto>>(result);
             var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
             okResult.Value.Should().Be(expectedResult);
+
+            _officeServiceMock.Verify(s => s.UpdateOfficeAsync(id, dto, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -93,6 +101,8 @@ namespace UnitTests
             var actionResult = Assert.IsType<ActionResult<OfficeResultDto>>(result);
             var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
             okResult.Value.Should().Be(expectedResult);
+
+            _officeServiceMock.Verify(s => s.UpdateOfficeStatusAsync(id, isActive, It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -105,6 +115,8 @@ namespace UnitTests
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             okResult.Value.Should().Be("The office was successfully deleted.");
+
+            _officeServiceMock.Verify(s => s.DeleteOfficeAsync(id, It.IsAny<CancellationToken>()),Times.Once);
         }
     }
 }

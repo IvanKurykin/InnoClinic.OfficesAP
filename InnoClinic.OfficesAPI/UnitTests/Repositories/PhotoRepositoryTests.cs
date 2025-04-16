@@ -50,6 +50,8 @@ public class PhotoRepositoryTests
         var result = await _photoRepository.UploadPhotoAsync(fileName, content);
 
         result.Should().Be(expectedId);
+
+        _bucketMock.Verify(b => b.UploadFromBytesAsync(fileName, content, It.IsAny<GridFSUploadOptions>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -63,6 +65,8 @@ public class PhotoRepositoryTests
         var result = await _photoRepository.GetPhotoByIdAsync(photoId);
 
         result.Should().Equal(expectedContent);
+
+        _bucketMock.Verify(b => b.DownloadAsBytesAsync(photoId, It.IsAny<GridFSDownloadOptions>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
