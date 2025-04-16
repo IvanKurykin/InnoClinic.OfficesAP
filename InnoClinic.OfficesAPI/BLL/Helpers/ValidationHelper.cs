@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace BLL.Helpers;
 
-[ExcludeFromCodeCoverage]
 public static class ValidationHelper
 {
     public static bool BeAValidImage(IFormFile? file)
@@ -15,9 +13,11 @@ public static class ValidationHelper
         return allowedExtensions.Contains(extension);
     }
 
-    public static bool BeAValidNumber(string? number, bool orEmpty = false)
+    public static bool IsAValidNumber(string? input, bool allowEmpty = false)
     {
-        return (orEmpty && string.IsNullOrEmpty(number))|| (!string.IsNullOrEmpty(number) && number.All(c => char.IsDigit(c) || char.IsLetter(c)));
+        if (string.IsNullOrEmpty(input)) return allowEmpty;
+
+        return input.All(char.IsLetterOrDigit);
     }
 
     public static bool BeAValidName(string name)
